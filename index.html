@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: #6b48ff;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #fff;
+            max-height: 400px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .bot-message {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .user-message .message-content {
+            background: #6b48ff;
+            color: #fff;
+        }
+
+        .bot-message .message-content {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .chat-footer {
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            background: #fff;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #6b48ff;
+            border-radius: 5px;
+            outline: none;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+
+        #send-btn {
+            background: #6b48ff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s;
+        }
+
+        #send-btn:hover {
+            background: #5438cc;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .chat-container {
+                max-width: 100%;
+                margin: 0 10px;
+            }
+            .chat-body {
+                max-height: 300px;
+            }
+            .message-content {
+                max-width: 85%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .chat-header {
+                font-size: 1em;
+            }
+            #user-input, #send-btn {
+                font-size: 0.8em;
+            }
+            .chat-footer {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">AI Chatbot</div>
+        <div class="chat-body" id="chat-body">
+            <div class="message bot-message">
+                <div class="message-content">Hello! How can I assist you today?</div>
+            </div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const chatBody = document.getElementById('chat-body');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        // Function to add a message to the chat
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', isUser ? 'user-message' : 'bot-message');
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content');
+            messageContent.textContent = content;
+            messageDiv.appendChild(messageContent);
+            chatBody.appendChild(messageDiv);
+            chatBody.scrollTop = chatBody.scrollHeight; // Scroll to latest message
+        }
+
+        // AIzaSyCFW1w84H96M9qRueCQRj1h0YWffGQT7NM
+        async function getBotResponse(message) {
+            // AIzaSyCFW1w84H96M9qRueCQRj1h0YWffGQT7NM
+            // Example API call structure (uncomment and adjust when you have the key):
+            /*
+            const apiKey = 'AIzaSyCFW1w84H96M9qRueCQRj1h0YWffGQT7NM';
+            const endpoint = 'https://api.google.com/gemini/v1/chat';
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            });
+            const data = await response.json();
+            return data.reply || 'Error: No response';
+            */
+            // Mock response for now
+            return `You said: "${message}". How can I assist further?`;
+        }
+
+        // Handle message sending
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return; // Ignore empty messages
+
+            addMessage(message, true); // Display user message
+            userInput.value = ''; // Clear input field
+
+            const botResponse = await getBotResponse(message); // Get bot reply
+            addMessage(botResponse); // Display bot message
+        }
+
+        // Event Listeners
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
